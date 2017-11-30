@@ -2,17 +2,32 @@ import java.math.BigDecimal;
 
 public class Employee {
 
-    public Employee(String departmentName, String name, BigDecimal salary) {
-        this.departmentName = departmentName;
+
+    private String Name;
+    private BigDecimal Salary;
+
+    public Employee(String name, BigDecimal salary) {
+        this.Name = name;
+        this.Salary = salary;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
         Name = name;
+    }
+
+    public BigDecimal getSalary() {
+        return Salary;
+    }
+
+    public void setSalary(BigDecimal salary) {
         Salary = salary;
     }
 
-    String departmentName;
-    String Name;
-    BigDecimal Salary;
-
     public String printInfo(){
-        return(Name+"; "+departmentName+"; "+Salary);
+        return(Name+"; "+"; "+Salary);
     }
 }
