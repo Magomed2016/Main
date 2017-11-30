@@ -12,7 +12,7 @@ public class Main {
         ArrayList<Employee> employees = new ArrayList<>();
         ArrayList<Department> departments = new ArrayList<>();
         Set<String> departmentNames = new HashSet<>();
-
+//.....чтение из файла
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]))){
             String s;
             while((s=bufferedReader.readLine())!=null){
@@ -24,11 +24,11 @@ public class Main {
         }catch (IOException e){
             e.printStackTrace();
         }
-
+//......создаём экземпляры Department и добавляем в лист
         for (String departmentName : departmentNames) {
             departments.add(new Department(departmentName));
         }
-
+//......добавляем соответствующих сотрудников в соответствующие отделы
         for (Department department : departments) {
 
             department.list = new ArrayList<>();
@@ -41,13 +41,15 @@ public class Main {
         }
 
 
-
+//.....запись в файл
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(args[1]))){
 
+            //записываем инф. о средней зарплате
             for (Department department : departments) {
                 bufferedWriter.write(department.name+" средняя зарплата: "+averageSalary(department)+"\r\n");
             }
 
+            //записываем варианты распределения сотрудников по отделам
             for (Department department : departments) {
                 for (Department department1 : departments) {
                     if(!department.equals(department1)){
@@ -67,7 +69,7 @@ public class Main {
 
 
     }
-
+//....расчёт средней зарплаты
     public static BigDecimal averageSalary(Department d){
         BigDecimal b = new BigDecimal("0.00");
         for (Employee employee : d.list) {
