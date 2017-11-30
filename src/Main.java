@@ -2,42 +2,36 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
 
         ArrayList<Employee> employees = new ArrayList<>();
-        ArrayList<Department> departments = new ArrayList<>();
-        Set<String> departmentNames = new HashSet<>();
+//        ArrayList<Department> departments = new ArrayList<>();
+//        Set<String> departmentNames = new HashSet<>();
+        Map<String, Department> departmentsMap = new HashMap<>();
+
+
+
 //.....чтение из файла
-        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]))){
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]+"2"))){
             String s;
             while((s=bufferedReader.readLine())!=null){
                 String[] info = s.split(";");
-                employees.add(new Employee(info[1].trim(),info[0].trim(),new BigDecimal(info[2].trim())));
-                departmentNames.add(info[1].trim());
+                employees.add(new Employee(info[0].trim(),new BigDecimal(info[2].trim())));
+                if(!departmentsMap.containsKey(info[1].trim())){
+                    departmentsMap.put(info[1].trim(),new Department(info[1].trim()));
+                    //????
+                    departmentsMap.get(info[1].trim()).addEmployee(employees.get(employees.size()-1));
+
+                }else departmentsMap.get(info[1].trim()).addEmployee(employees.get(employees.size()-1));
             }
 
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-//......создаём экземпляры Department и добавляем в лист
-        for (String departmentName : departmentNames) {
-            departments.add(new Department(departmentName));
-        }
-//......добавляем соответствующих сотрудников в соответствующие отделы
-        for (Department department : departments) {
-
-            department.list = new ArrayList<>();
-            for (Employee employee : employees) {
-                if(department.name.equals(employee.departmentName))
-                    department.list.add(employee);
-
-            }
-
+        } catch (FileNotFoundException e){
+            System.err.println("Не удаётся найти указанный файл");
+        } catch (IOException e) {
+            System.err.println("Не удаётся установить соединение с файлом");
         }
 
 
@@ -45,17 +39,18 @@ public class Main {
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(args[1]))){
 
             //записываем инф. о средней зарплате
-            for (Department department : departments) {
-                bufferedWriter.write(department.name+" средняя зарплата: "+averageSalary(department)+"\r\n");
+            for (Department department : departmentsMap.values()) {
+                bufferedWriter.write(department.getName()+" средняя зарплата: "+department.averageSalary()+"\r\n");
             }
 
-            //записываем варианты распределения сотрудников по отделам
-            for (Department department : departments) {
-                for (Department department1 : departments) {
+//.........записываем варианты распределения сотрудников по отделам
+            //?????
+            for (Department department : departmentsMap.values()) {
+                for (Department department1 : departmentsMap.values()) {
                     if(!department.equals(department1)){
                         for (Employee employee : employees) {
-                            if(averageSalary(department).compareTo(employee.Salary )==1&& averageSalary(department1).compareTo(employee.Salary )==-1)
-                                bufferedWriter.write(employee.Name+"----> "+department1.name+"\r\n");
+                            if(department.averageSalary().compareTo(employee.getSalary() )==1&& department1.averageSalary().compareTo(employee.getSalary() )==-1)
+                                bufferedWriter.write(employee.getName()+"----> "+department1.getName()+"\r\n");
 
                         }
                     }
@@ -69,18 +64,5 @@ public class Main {
 
 
     }
-//....расчёт средней зарплаты
-    public static BigDecimal averageSalary(Department d){
-        BigDecimal b = new BigDecimal("0.00");
-        for (Employee employee : d.list) {
-
-             b = b.add(employee.Salary);
-        }
-        b=b.divide(new BigDecimal(d.list.size()),2, RoundingMode.UP);
-
-
-        return b;
-    }
-
 
 }
