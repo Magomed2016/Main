@@ -5,13 +5,17 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        writeFile(readFile(args[0]),args[1]);
+        Set<Department> departments = null;
+
+        writeFile(readFile(departments, args[0]),args[1]);
 
     }
 
-    public static Set<Department> readFile(String url){
+    public static Set<Department> readFile(Set<Department> departmentSet, String url){
 
-            Set<Department> departmentSet = new HashSet<>();
+            if(departmentSet==null){
+                departmentSet = new HashSet<>();
+            }
 
             try(BufferedReader bufferedReader = new BufferedReader(new FileReader(url))){
 
@@ -19,9 +23,12 @@ public class Main {
                 while((string=bufferedReader.readLine())!=null) {
                     String[] info = string.split(";");
                     if(string.isEmpty()) continue;
-                    if(info[0].trim().isEmpty() || info[1].trim().isEmpty() || info[2].trim().isEmpty() || info[2].trim().startsWith("-")){
-                        throw new IllegalArgumentException();
+
+                    if(info.length!=3 || info[0].trim().isEmpty() || info[1].trim().isEmpty() || info[2].trim().isEmpty()){
+                        throw new IllegalArgumentException("Считываемые поля не должны быть пустыми");
                     }
+                    if(info[2].trim().startsWith("-"))
+                        throw  new IllegalArgumentException("Считана отрицательная зарплата");
                     Employee employee = new Employee(info[0].trim(),new BigDecimal(info[2].trim()));
                     departmentSet.add(new Department(info[1].trim()));
                     for (Department department : departmentSet) {
@@ -40,7 +47,8 @@ public class Main {
             }catch (NumberFormatException e){
                 System.err.println("Неверный формат данных");
             }catch (IllegalArgumentException e){
-                System.err.println("Считанные данные не допустимы");
+
+                System.err.println(e.getMessage());
             }
             return departmentSet;
     }
@@ -50,7 +58,7 @@ public class Main {
             try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(url))){
 
                 for (Department department : departmentSet) {
-                    bufferedWriter.write(department.getName()+" средняя зарплата: "+department.averageSalary()+"\r\n");
+                    bufferedWriter.write(department.getName() +" средняя зарплата: "+ department.averageSalary() + "\r\n");
                 }
                 bufferedWriter.write(regroupingEmployees(departmentSet));
 
