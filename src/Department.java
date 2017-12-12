@@ -52,6 +52,10 @@ public class Department {
         }
     }
 
+    public BigDecimal getBudget(){
+        return averageSalary().multiply(new BigDecimal(String.valueOf(getEmployeeList().size())));
+    }
+
     @Override
     public int hashCode() {
         return getName().hashCode();

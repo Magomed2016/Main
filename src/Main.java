@@ -124,7 +124,7 @@ public class Main {
             }
             System.out.println("");
             chekPermunation(departments, department, employeeArrayList);
-            employeeArrayList.remove(employeeArrayList.size()-1);
+          //  employeeArrayList.remove(employeeArrayList.size()-1);
             return;
         }
 
